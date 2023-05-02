@@ -1,6 +1,7 @@
 package com.example.hw16nosqldb.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class Person {
 
     @Id
@@ -18,6 +20,6 @@ public class Person {
     private String lastName;
     private int age;
     private String email;
-    private boolean isMarried;
+    private boolean married;
 
 }

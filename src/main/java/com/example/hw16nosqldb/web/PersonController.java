@@ -27,29 +27,32 @@ public class PersonController {
         return new ResponseEntity<>(personService.create(newPersonDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/firstname/{firstName}")
-    public ResponseEntity<List<PersonInfoDto>> getPersonsByFirstName(@PathVariable("firstName") @Validated String firstName) {
+    @GetMapping("/firstName")
+    public ResponseEntity<List<PersonInfoDto>> getPersonsByFirstName(@RequestParam("firstName") String firstName) {
         return new ResponseEntity<>(personService.getByFirstName(firstName), HttpStatus.OK);
     }
 
-    @GetMapping("/lastName/{lastName}")
-    public ResponseEntity<List<PersonInfoDto>> getPersonsByLastName(@PathVariable("lastName") @Validated String lastName) {
+    @GetMapping("/lastName")
+    public ResponseEntity<List<PersonInfoDto>> getPersonsByLastName(@RequestParam("lastName")  String lastName) {
         return new ResponseEntity<>(personService.getByLastName(lastName), HttpStatus.OK);
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<PersonInfoDto> getPersonByEmail(@PathVariable("email") @Validated String email) {
+    @GetMapping("/email")
+    public ResponseEntity<PersonInfoDto> getPersonByEmail(@RequestParam("email") String email) {
+        if (email == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(personService.getByEmail(email), HttpStatus.OK);
     }
 
-    @GetMapping("/age/{age}")
-    public ResponseEntity<List<PersonInfoDto>> getPersonsOlderThan(@PathVariable("age") Optional<Integer> age) {
+    @GetMapping("/age")
+    public ResponseEntity<List<PersonInfoDto>> getPersonsOlderThan(@RequestParam("age") Optional<Integer> age) {
         int ageOfAdult = age.orElse(18);
         return new ResponseEntity<>(personService.getPersonsOlderThan(ageOfAdult), HttpStatus.OK);
     }
 
-    @GetMapping("/marriage/{isMarried}")
-    public ResponseEntity<List<PersonInfoDto>> getPersonsByMarriageStatus(@PathVariable("isMarried") boolean isMarried) {
+    @GetMapping("/marriage")
+    public ResponseEntity<List<PersonInfoDto>> getPersonsByMarriageStatus(@RequestParam("married") boolean isMarried) {
         return new ResponseEntity<>(personService.getPersonsByMarriageStatus(isMarried), HttpStatus.OK);
 
     }

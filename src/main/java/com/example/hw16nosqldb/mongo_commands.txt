@@ -29,7 +29,7 @@ db.person.find({"isMarried":"true"})
 
 
 
-
+db.person.find({firstName: {$regex: /^TOM$/i}})  // Ignore Case!!!
 
 
 

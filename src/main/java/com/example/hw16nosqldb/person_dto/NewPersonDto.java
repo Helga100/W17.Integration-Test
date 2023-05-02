@@ -2,9 +2,12 @@ package com.example.hw16nosqldb.person_dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
+
 @Data
+@Builder
 public class NewPersonDto {
 
     @Size(min = 2)
@@ -14,5 +17,6 @@ public class NewPersonDto {
     private int age;
     @Email
     private String email;
-    private boolean isMarried;
+    private boolean married;
+
 }

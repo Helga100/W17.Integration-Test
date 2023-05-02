@@ -5,7 +5,6 @@ import com.example.hw16nosqldb.model.Person;
 import com.example.hw16nosqldb.person_dto.NewPersonDto;
 import com.example.hw16nosqldb.person_dto.PersonInfoDto;
 import com.example.hw16nosqldb.person_repository.PersonRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +13,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
+
 
     private final ModelMapper modelMapper;
     private final PersonRepository personRepository;
+
+    public PersonServiceImpl(ModelMapper modelMapper, PersonRepository personRepository) {
+        this.modelMapper = modelMapper;
+        this.personRepository = personRepository;
+    }
+
 
     @Override
     public PersonInfoDto create(NewPersonDto newPersonDto) {
@@ -68,4 +73,6 @@ public class PersonServiceImpl implements PersonService {
                 .map(person -> modelMapper.map(person, PersonInfoDto.class))
                 .collect(Collectors.toList());
     }
+
+
 }
