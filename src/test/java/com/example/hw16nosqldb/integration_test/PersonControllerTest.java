@@ -1,12 +1,16 @@
 package com.example.hw16nosqldb.integration_test;
 
+import com.example.hw16nosqldb.integration_test.config.PersonPopulatorConfiguration;
 import com.example.hw16nosqldb.person_dto.NewPersonDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,9 +21,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+//@DataMongoTest
+@Import(PersonPopulatorConfiguration.class)
 @ExtendWith(SpringExtension.class)  // дозволяэ створювати бин mockMvc
-@SpringBootTest() // запускає тестовий environment
-@AutoConfigureMockMvc   // дозволяє використовувати Mvc і автоконфігурувати
+//@SpringBootTest() // запускає тестовий environment
+//@AutoConfigureMockMvc   // дозволяє використовувати Mvc і автоконфігурувати
+@AutoConfigureDataMongo
+//@SpringBootTest
 public class PersonControllerTest {
 
     @Autowired
@@ -28,9 +37,9 @@ public class PersonControllerTest {
 
     @Test
     void getAllTest() throws Exception {
-        mockMvc.perform(get("/api/persons"))
+        mockMvc.perform(get("/api/persons"))        // get назва Http метода!
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(15)));
+                .andExpect(jsonPath("$", hasSize(3)));
 
     }
 

@@ -1,0 +1,27 @@
+[
+  {
+    "_class": "com.example.hw16nosqldb.model.Person",
+    "firstName": "Jack",
+    "lastName": "Smith",
+    "age": 52,
+    "email": "Smith@gmail.com",
+    "married": true
+  },
+
+  {
+    "_class": "com.example.hw16nosqldb.model.Person",
+    "firstName": "Sarah",
+    "lastName": "Dounson",
+    "age": 25,
+    "email": "Dounson@gmail.com",
+    "married": false
+  },
+  {
+    "_class": "com.example.hw16nosqldb.model.Person",
+    "firstName": "Boris",
+    "lastName": "Johnson",
+    "age": 60,
+    "email": "Johnson@gmail.com",
+    "married": true
+  }
+]
