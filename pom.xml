@@ -122,12 +122,12 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>/Hw16NoSqlDbApplication*</exclude>
-                        <exclude>/repository/*</exclude>
-                        <exclude>/model/</exclude>
-                        <exclude>/exception/</exclude>
-                        <exclude>/person_dto/</exclude>
-                        <exclude>/config/</exclude>
+                        <exclude>**/Hw16NoSqlDbApplication*</exclude>
+                        <exclude>**/repository/*</exclude>
+                        <exclude>**/model/**</exclude>
+                        <exclude>**/exception/**</exclude>
+                        <exclude>**/person_dto/**</exclude>
+                        <exclude>**/config/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
