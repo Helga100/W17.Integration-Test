@@ -3,15 +3,16 @@ package com.example.hw16nosqldb.integration_test;
 import com.example.hw16nosqldb.integration_test.config.PersonPopulatorConfiguration;
 import com.example.hw16nosqldb.person_dto.NewPersonDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -21,35 +22,39 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-//@DataMongoTest
+@ExtendWith(SpringExtension.class)
 @Import(PersonPopulatorConfiguration.class)
-@ExtendWith(SpringExtension.class)  // дозволяэ створювати бин mockMvc
-//@SpringBootTest() // запускає тестовий environment
-//@AutoConfigureMockMvc   // дозволяє використовувати Mvc і автоконфігурувати
-@AutoConfigureDataMongo
-//@SpringBootTest
+@SpringBootTest
+@AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class PersonControllerTest {
 
     @Autowired
-    private MockMvc mockMvc; // для виклику ендпоінту з заданими параментрами і перевірки відпові
+    private MockMvc mockMvc;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @AfterEach
+    void cleanUpDatabase() {
+        mongoTemplate.getDb().drop();
+    }
 
     @Test
     void getAllTest() throws Exception {
-        mockMvc.perform(get("/api/persons"))        // get назва Http метода!
+        mockMvc.perform(get("/api/persons"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)));
+                .andExpect(jsonPath("$", hasSize(4)));
 
     }
 
     @Test
     void createObjectTest() throws Exception {
         NewPersonDto newPersonDto = NewPersonDto.builder()
-                .firstName("Helga")
-                .lastName("Smirnova")
-                .email("Smirnova@gmail.com")
-                .age(69)
+                .firstName("Elena")
+                .lastName("Petrova")
+                .age(67)
+                .email("petrova@gmail.com")
                 .married(true)
                 .build();
         final ResultActions resultActions = mockMvc.perform(post("/api/persons")
@@ -58,12 +63,13 @@ public class PersonControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
         resultActions
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName").value("Helga"))
-                .andExpect(jsonPath("$.lastName").value("Smirnova"))
-                .andExpect(jsonPath("$.email").value("Smirnova@gmail.com"))
-                .andExpect(jsonPath("$.age").value(69))
+                .andExpect(jsonPath("$.firstName").value("Elena"))
+                .andExpect(jsonPath("$.lastName").value("Petrova"))
+                .andExpect(jsonPath("$.age").value(67))
+                .andExpect(jsonPath("$.email").value("petrova@gmail.com"))
                 .andExpect(jsonPath("$.married").value(true));
     }
+
 
     @Test
     void createTestBadRequestForCreation() throws Exception {
@@ -74,50 +80,48 @@ public class PersonControllerTest {
     @Test
     void getObjectByFirstNameTest() throws Exception {
         mockMvc.perform(get("/api/persons/firstName")
-                        .param("firstName", "Heleg")
+                        .param("firstName", "Elena")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].firstName").value("Heleg"))
-                .andExpect(jsonPath("$[0].lastName").value("Ivanov"))
-                .andExpect(jsonPath("$[0].email").value("ivanov@gmail.com"))
-                .andExpect(jsonPath("$[0].age").value(15))
-                .andExpect(jsonPath("$[0].married").value(false))
-                .andExpect(jsonPath("$").value(hasSize(1)));
-
+                .andExpect(jsonPath("$[0].firstName").value("Elena"))
+                .andExpect(jsonPath("$[0].lastName").value("Petrova"))
+                .andExpect(jsonPath("$[0].age").value(67))
+                .andExpect(jsonPath("$[0].email").value("petrova@gmail.com"))
+                .andExpect(jsonPath("$[0].married").value(true));
     }
 
 
     @Test
     void getObjectByLastNameTest() throws Exception {
         mockMvc.perform(get("/api/persons/lastName")
-                        .param("lastName", "Ivanov")
+                        .param("lastName", "Petrova")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].firstName").value("Heleg"))
-                .andExpect(jsonPath("$[0].lastName").value("Ivanov"))
-                .andExpect(jsonPath("$[0].email").value("ivanov@gmail.com"))
-                .andExpect(jsonPath("$[0].age").value(15))
-                .andExpect(jsonPath("$[0].married").value(false));
+                .andExpect(jsonPath("$[0].firstName").value("Elena"))
+                .andExpect(jsonPath("$[0].lastName").value("Petrova"))
+                .andExpect(jsonPath("$[0].age").value(67))
+                .andExpect(jsonPath("$[0].email").value("petrova@gmail.com"))
+                .andExpect(jsonPath("$[0].married").value(true));
     }
 
 
     @Test
     void getObjectByEmailTest() throws Exception {
         mockMvc.perform(get("/api/persons/email")
-                        .param("email", "ivanov@gmail.com")
+                        .param("email", "petrova@gmail.com")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.firstName").value("Heleg"))
-                .andExpect(jsonPath("$.lastName").value("Ivanov"))
-                .andExpect(jsonPath("$.email").value("ivanov@gmail.com"))
-                .andExpect(jsonPath("$.age").value(15))
-                .andExpect(jsonPath("$.married").value(false));
+                .andExpect(jsonPath("$.firstName").value("Elena"))
+                .andExpect(jsonPath("$.lastName").value("Petrova"))
+                .andExpect(jsonPath("$.age").value(67))
+                .andExpect(jsonPath("$.email").value("petrova@gmail.com"))
+                .andExpect(jsonPath("$.married").value(true));
     }
 
     @Test
@@ -129,16 +133,16 @@ public class PersonControllerTest {
     @Test
     void getObjectByAgeTest() throws Exception {
         mockMvc.perform(get("/api/persons/age")
-                        .param("age", "76")
+                        .param("age", "65")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].firstName").value("Tom"))
-                .andExpect(jsonPath("$[0].lastName").value("Salov"))
-                .andExpect(jsonPath("$[0].email").value("salov@gmail.com"))
-                .andExpect(jsonPath("$[0].age").value(77))
-                .andExpect(jsonPath("$[0].married").value(false));
+                .andExpect(jsonPath("$[0].firstName").value("Elena"))
+                .andExpect(jsonPath("$[0].lastName").value("Petrova"))
+                .andExpect(jsonPath("$[0].age").value(67))
+                .andExpect(jsonPath("$[0].email").value("petrova@gmail.com"))
+                .andExpect(jsonPath("$[0].married").value(true));
     }
 
     @Test
@@ -149,9 +153,10 @@ public class PersonControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].firstName").value("Olga"))
-                .andExpect(jsonPath("$[0].lastName").value("Steve"))
-                .andExpect(jsonPath("$[0].email").value("Steve@gmail.com"))
+                .andExpect(jsonPath("$[0].firstName").value("Elena"))
+                .andExpect(jsonPath("$[0].lastName").value("Petrova"))
+                .andExpect(jsonPath("$[0].age").value(67))
+                .andExpect(jsonPath("$[0].email").value("petrova@gmail.com"))
                 .andExpect(jsonPath("$[0].married").value(true));
     }
 
@@ -163,5 +168,6 @@ public class PersonControllerTest {
             throw new RuntimeException(e);
         }
     }
+
 }
 

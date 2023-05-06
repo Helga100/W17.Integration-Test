@@ -5,7 +5,7 @@
     "lastName": "Smith",
     "age": 52,
     "email": "Smith@gmail.com",
-    "married": true
+    "married": false
   },
 
   {
@@ -22,6 +22,14 @@
     "lastName": "Johnson",
     "age": 60,
     "email": "Johnson@gmail.com",
+    "married": false
+  },
+  {
+    "_class": "com.example.hw16nosqldb.model.Person",
+    "firstName": "Elena",
+    "lastName": "Petrova",
+    "age": 67,
+    "email": "petrova@gmail.com",
     "married": true
   }
 ]
